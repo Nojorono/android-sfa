@@ -1,6 +1,7 @@
 // src/services/authService.ts
 import AsyncStorage from '@react-native-async-storage/async-storage';  // Use the correct AsyncStorage import
 import axiosInstance from "../config/axiosInstance";
+import Toast from "react-native-toast-message";
 
 interface LoginResponse {
     statusCode: number;
@@ -25,7 +26,12 @@ class AuthServices {
             });
             return response.data
         } catch (error: any) {
-            console.error('Login failed:', error)
+            Toast.show({
+                type: 'error',
+                text1: 'Login Failed',
+                text2: error.response?.data?.message || 'An error occurred during login',
+                position: 'bottom',
+            });
             throw error
         }
     }

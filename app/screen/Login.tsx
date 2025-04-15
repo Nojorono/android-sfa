@@ -1,9 +1,9 @@
 // app/auth/login.tsx
 import React, {useEffect, useState} from 'react';
-import { StyleSheet, Text, TextInput, View, Image, TouchableOpacity, Dimensions } from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
+import {StyleSheet, Text, TextInput, View, Image, TouchableOpacity, Dimensions} from 'react-native';
+import {useForm, Controller} from 'react-hook-form';
 import Toast from "react-native-toast-message";
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from "@react-navigation/stack";
 import {loadAuthState, useAuthStore} from "../store/useAuthStore";
 import {AuthStackParamList} from "./navigation/AuthNavigator";
@@ -14,7 +14,7 @@ import {Ionicons} from "@expo/vector-icons";
 import ButtonComponent from "@/components/ButtonComponent";
 
 // Get screen dimensions
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 type FormData = {
     email: string;
@@ -23,11 +23,11 @@ type FormData = {
 
 type NavigationProp = StackNavigationProp<AuthStackParamList, 'Login'>;
 export default function LoginScreen() {
-    const { setAuthenticated, setUser, setToken, user, isAuthenticated, accessToken } = useAuthStore();
+    const {setAuthenticated, setUser, setToken, user, isAuthenticated, accessToken} = useAuthStore();
     const navigation = useNavigation<NavigationProp>();
     const [passwordVisible, setPasswordVisible] = useState(false);
-    const { control, handleSubmit, formState: { errors },setValue } = useForm<FormData>();
-    const {  setLoading } = useLoadingStore();
+    const {control, handleSubmit, formState: {errors}, setValue} = useForm<FormData>();
+    const {setLoading} = useLoadingStore();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
@@ -59,16 +59,16 @@ export default function LoginScreen() {
         loadCredentials();
     }, [setLoading]);
 
-    console.log(`User:${user}`, `isAuthenticated:${isAuthenticated}`, `accessToken:${accessToken}`)
+    // console.log(`User:${user}`, `isAuthenticated:${isAuthenticated}`, `accessToken:${accessToken}`)
 
 
     const handleLogin = async (data: any) => {
-        const { email, password } = data;
+        const {email, password} = data;
         if (email && password) {
             try {
                 setLoading(true);
                 const response = await AuthServices.login(email, password);
-                if (response.statusCode === 200){
+                if (response.statusCode === 200) {
                     if (rememberMe) {
                         // Save credentials
                         await AsyncStorage.setItem('rememberedEmail', data.email);
@@ -97,8 +97,8 @@ export default function LoginScreen() {
                     });
                 }
             } catch (error: any) {
-                const { data } = error.response;
-                if (data.statusCode === 404){
+                const {data} = error.response;
+                if (data.statusCode === 404) {
                     Toast.show({
                         type: 'error',
                         text1: 'Error',
@@ -111,18 +111,18 @@ export default function LoginScreen() {
                         text2: `${data.message}`,
                     });
                 }
-            }finally {
+            } finally {
                 setLoading(false);
             }
         }
     };
 
-    const { width, height } = Dimensions.get('window'); // Get device dimensions
+    const {width, height} = Dimensions.get('window'); // Get device dimensions
 
     const signInStyles = StyleSheet.create({
         headerImage: {
-            width: width * 0.7, // Use percentage of device width
-            height: height * 0.2, // Use percentage of device height
+            width: width * 0.5, // Use percentage of device width
+            height: height * 0.4, // Use percentage of device height
             resizeMode: 'contain',
             marginBottom: 10,
         },
@@ -150,96 +150,110 @@ export default function LoginScreen() {
     };
 
     return (
-        <View style={styles.container}>
-            {/*<Image source={require('../../assets/logo-nna.png')} style={signInStyles.headerImage} />*/}
+        <>
+            <View style={styles.container}>
+                <Image source={require('../../assets/images/sfa-removebg-preview.png')}
+                       style={signInStyles.headerImage}/>
 
-            <Controller
-                control={control}
-                name="email"
-                defaultValue={email}
-                rules={{
-                    required: 'Email is required',
-                    pattern: {
-                        value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/, // Regex for email validation
-                        message: 'Invalid email address',
-                    },
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                        placeholder="Email"
-                        value={value || email}
-                        onBlur={onBlur}
-                        onChangeText={(text) => {
-                            onChange(text); // Update react-hook-form value
-                            setEmail(text); // Update local state
-                        }}
-                        style={[styles.input, errors.email && { borderColor: 'red' }]}
-                    />
-                )}
-            />
-
-
-            {/* Password Input Field */}
-            <View style={signInStyles.passwordContainer}>
                 <Controller
                     control={control}
-                    name="password"
-                    rules={{ required: 'Password is required' }}
-                    render={({ field: { onChange, onBlur, value } }) => (
+                    name="email"
+                    defaultValue={email}
+                    rules={{
+                        required: 'Email is required',
+                        pattern: {
+                            value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/, // Regex for email validation
+                            message: 'Invalid email address',
+                        },
+                    }}
+                    render={({field: {onChange, onBlur, value}}) => (
                         <TextInput
-                            placeholder="Password"
-                            secureTextEntry={!passwordVisible}
-                            value={value}
+                            placeholder="Email"
+                            value={value || email}
                             onBlur={onBlur}
-                            onChangeText={onChange}
-                            style={[styles.input, errors.password && { borderColor: 'red' }]}
+                            onChangeText={(text) => {
+                                onChange(text); // Update react-hook-form value
+                                setEmail(text); // Update local state
+                            }}
+                            style={[styles.input, errors.email && {borderColor: 'red'}]}
                         />
                     )}
                 />
-                <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)} style={signInStyles.eyeIcon}>
-                    <Ionicons name={passwordVisible ? 'eye-off' : 'eye'} size={24} />
+
+
+                {/* Password Input Field */}
+                <View style={signInStyles.passwordContainer}>
+                    <Controller
+                        control={control}
+                        name="password"
+                        rules={{required: 'Password is required'}}
+                        render={({field: {onChange, onBlur, value}}) => (
+                            <TextInput
+                                placeholder="Password"
+                                secureTextEntry={!passwordVisible}
+                                value={value}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                style={[styles.input, errors.password && {borderColor: 'red'}]}
+                            />
+                        )}
+                    />
+                    <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)} style={signInStyles.eyeIcon}>
+                        <Ionicons name={passwordVisible ? 'eye-off' : 'eye'} size={24}/>
+                    </TouchableOpacity>
+                </View>
+
+                <View style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginBottom: 20,
+                }}>
+                    <TouchableOpacity onPress={() => setRememberMe(!rememberMe)} style={{
+                        width: 20,
+                        height: 20,
+                        marginRight: 10,
+                    }}>
+                        <View style={rememberMe ? {
+                            width: 20,
+                            height: 20,
+                            alignItems: 'center',
+                            backgroundColor: '#2F3193',
+                            borderRadius: 5,
+                        } : {
+                            width: 20,
+                            height: 20,
+                            backgroundColor: '#fff',
+                            borderWidth: 1,
+                            borderColor: '#ccc',
+                            borderRadius: 5,
+                        }}
+                        >
+                            {rememberMe ? <Text style={{color: '#fff', fontWeight: 'bold', fontSize: 10}}>
+                                ✔
+                            </Text> : null}
+                        </View>
+
+
+                    </TouchableOpacity>
+                    <Text style={{
+                        fontSize: 16,
+                        color: '#333',
+                    }}>Remember Me</Text>
+                </View>
+
+                <ButtonComponent
+                    title="Login"
+                    onPress={handleSubmit(handleLogin)}
+                    buttonStyle={styles.button}
+                    textStyle={styles.buttonText}
+                />
+
+                <TouchableOpacity onPress={handleForgotPassword}>
+                    <Text style={signInStyles.forgotPassword}>Forgot Password?</Text>
                 </TouchableOpacity>
             </View>
-
-            <View style={{flexDirection: 'row',
-                alignItems: 'center',
-                marginBottom: 20,}}>
-                <TouchableOpacity onPress={() => setRememberMe(!rememberMe)} style={{width: 20,
-                    height: 20,
-                    marginRight: 10,}}>
-                    <View style={rememberMe ? { width: 20,
-                        height: 20,
-                        alignItems:'center',
-                        backgroundColor: '#2F3193',
-                        borderRadius: 5,} : {width: 20,
-                        height: 20,
-                        backgroundColor: '#fff',
-                        borderWidth: 1,
-                        borderColor: '#ccc',
-                        borderRadius: 5,}}
-                    >
-                        {rememberMe ? <Text style={{color: '#fff', fontWeight: 'bold', fontSize: 10}}>
-                            ✔
-                        </Text> : null}
-                    </View>
-
-
-                </TouchableOpacity>
-                <Text style={{ fontSize: 16,
-                    color: '#333',}}>Remember Me</Text>
-            </View>
-
-            <ButtonComponent
-                title="Login"
-                onPress={handleSubmit(handleLogin)}
-                buttonStyle={styles.button}
-                textStyle={styles.buttonText}
-            />
-
-            <TouchableOpacity onPress={handleForgotPassword}>
-                <Text style={signInStyles.forgotPassword}>Forgot Password?</Text>
-            </TouchableOpacity>
-        </View>
+            <Toast/>
+        </>
     );
 }
 
@@ -274,7 +288,7 @@ const styles = StyleSheet.create({
         borderWidth: 1.5,
         paddingLeft: width * 0.025,
         borderRadius: 8,
-        width: width - 20 ,
+        width: width - 20,
         marginBottom: height * 0.02,
         backgroundColor: "white",
         color: "black",

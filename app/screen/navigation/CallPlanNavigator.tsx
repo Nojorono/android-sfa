@@ -1,23 +1,25 @@
 import React from 'react';
 import {createStackNavigator} from "@react-navigation/stack";
-import HomeScreen from "@/app/screen/HomeScreen";
+import CallPlanScreen from "@/app/screen/menu/CallPlan/CallPlanScreen";
 import {Text, View} from "react-native";
-import {NavigatorScreenParams} from "@react-navigation/native";
-import CallPlanNavigator, {CallPlanParamList} from "@/app/screen/navigation/CallPlanNavigator";
 
-export type MainTabParamList = {
-    Home: undefined;
-    CallPlanStack: NavigatorScreenParams<CallPlanParamList>;
+export type CallPlanParamList = {
+    CallPlan: undefined;
+    ReportKas:undefined;
+    ReportBtb:undefined;
 };
-const Stack = createStackNavigator<MainTabParamList>();
+const Stack = createStackNavigator<CallPlanParamList>();
 
-const MainNavigator = () => (
+const CallPlanNavigator = () => (
     <Stack.Navigator
-        initialRouteName="Home"
+        initialRouteName="CallPlan"
+        // screenOptions={{
+        //     headerShown: false
+        // }}
     >
         <Stack.Screen
-            name="Home"
-            component={HomeScreen}
+            name="CallPlan"
+            component={CallPlanScreen}
             options={{
                 headerTitle: () => (
                     <View style={{
@@ -31,15 +33,16 @@ const MainNavigator = () => (
                     </View>
                 ),
             }}
-            />
-        <Stack.Screen
-            name="CallPlanStack"
-            component={CallPlanNavigator}
-            options={{ headerShown: false }}
         />
+        {/*<Stack.Screen*/}
+        {/*    name="ReportKas"*/}
+        {/*    component={CallPlanScreen}*/}
+        {/*/>*/}
+        {/*<Stack.Screen*/}
+        {/*    name="ReportBtb"*/}
+        {/*    component={CallPlanScreen}*/}
+        {/*/>*/}
     </Stack.Navigator>
 );
 
-
-
-export default MainNavigator;
+export default CallPlanNavigator;
