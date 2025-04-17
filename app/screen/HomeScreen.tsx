@@ -6,26 +6,32 @@ import {useAuthStore} from "@/app/store/useAuthStore";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {NavigationProp, StackActions, useNavigation} from "@react-navigation/native";
 import {CallPlanParamList} from "@/app/screen/navigation/CallPlanNavigator";
+import {BlurView} from "expo-blur";
+import {navigateToStack} from "@/app/util/helper";
+
 function HomeScreen() {
     const navigation = useNavigation<NavigationProp<CallPlanParamList>>();
     const {setLoading} = useLoadingStore();
     const {clearAuth} = useAuthStore();
     const menuItems = [
-        { title: "Dashboard", icon: 'speedometer-outline' },
-        { title: "Call Plan", icon: 'cart-outline' },
-        { title: "Inventory", icon: 'cube-outline' },
-        { title: "Sales", icon: 'cash-outline' },
-        { title: "Customers", icon: 'people-outline' },
-        { title: "Reports", icon: 'document-text-outline' },
-        { title: "Analytics", icon: 'stats-chart-outline' },
-        { title: "Messages", icon: 'chatbubbles-outline' },
-        { title: "Calendar", icon: 'calendar-outline' },
-        { title: "Tasks", icon: 'checkbox-outline' },
-        { title: "Documents", icon: 'folder-outline' },
-        { title: "Settings", icon: 'settings-outline' },
-        { title: "Notifications", icon: 'notifications-outline' },
-        { title: "Help Center", icon: 'help-circle-outline' },
-        { title: "Logout", icon: 'log-out-outline' }
+        {title: "Dashboard", icon: 'speedometer-outline', navigation: {stack: 'DashboardStack', screen: 'Dashboard'}},
+        {title: "Call Plan", icon: 'cart-outline', navigation: {stack: 'CallPlanStack', screen: 'CallPlan'}},
+        {title: "Inventory", icon: 'cube-outline', navigation: {stack: 'InventoryStack', screen: 'Inventory'}},
+        {title: "Sales", icon: 'cash-outline', navigation: {stack: 'SalesStack', screen: 'Sales'}},
+        {title: "Customers", icon: 'people-outline', navigation: {stack: 'CustomersStack', screen: 'Customers'}},
+        {title: "Reports", icon: 'document-text-outline', navigation: {stack: 'ReportsStack', screen: 'Reports'}},
+        {title: "Analytics", icon: 'stats-chart-outline', navigation: {stack: 'AnalyticsStack', screen: 'Analytics'}},
+        {title: "Messages", icon: 'chatbubbles-outline', navigation: {stack: 'MessagesStack', screen: 'Messages'}},
+        {title: "Calendar", icon: 'calendar-outline', navigation: {stack: 'CalendarStack', screen: 'Calendar'}},
+        {title: "Tasks", icon: 'checkbox-outline', navigation: {stack: 'TasksStack', screen: 'Tasks'}},
+        {title: "Documents", icon: 'folder-outline', navigation: {stack: 'DocumentsStack', screen: 'Documents'}},
+        {title: "Settings", icon: 'settings-outline', navigation: {stack: 'SettingsStack', screen: 'Settings'}},
+        {
+            title: "Notifications",
+            icon: 'notifications-outline',
+            navigation: {stack: 'NotificationsStack', screen: 'Notifications'}
+        },
+        {title: "Help Center", icon: 'help-circle-outline', navigation: {stack: 'HelpStack', screen: 'HelpCenter'}},
     ];
 
     // Split menu items into chunks of 2 for each row
@@ -57,60 +63,78 @@ function HomeScreen() {
             },
         ]);
     };
+
+    const handleMenuClick = () => {
+
+    }
     return (
 
-    <View style={styles.container}>
-        {/* User profile section */}
-        <View style={styles.profileSection}>
-            <Text style={styles.profileText}>LPGKV-LPGKEVIN</Text>
-            <Text style={styles.profileSubtext}>LPG SKITAKLA</Text>
-        </View>
-
-        {/* Navigation menu */}
-        <ScrollView contentContainerStyle={styles.menuContainer}>
-            <View style={styles.activitiesHeader}>
-                <Text style={styles.activitiesHeaderText}>Activities</Text>
+        <View style={styles.container}>
+            <View style={{zIndex:10}}>
+                <Toast topOffset={1}/>
             </View>
-            {rows.map((rowItems, rowIndex) => (
-                <View key={rowIndex} style={styles.menuRow}>
-                    {rowItems.map((item, index) => (
-                        <TouchableOpacity key={index} onPress={() => {
-                            navigation.dispatch(StackActions.push('CallPlanStack', {
-                                screen: 'CallPlan',
-                            }));
-                        }}>
-                            <MenuItem
-                                key={index}
-                                title={item.title}
-                                subItems={item.icon}
-                            />
-                        </TouchableOpacity>
+            {/* User profile section */}
+            <BlurView
+                intensity={80} // 0-100
+                tint="extraLight" // 'dark' | 'light' | 'default'
+                style={styles.profileSection}
+            >
+                <Text style={styles.profileText}>LPGKV-LPGKEVIN</Text>
+                <Text style={styles.profileSubtext}>LPG SKITAKLA</Text>
+                <TouchableOpacity onPress={handleLogout}>
+                    <Text>logout</Text>
+                </TouchableOpacity>
+            </BlurView>
 
-                    ))}
-                    {/* Add empty view if odd number of items to maintain layout */}
-                    {rowItems.length < chunkSize && (
-                        <View style={styles.emptyMenuItem} />
-                    )}
+
+            {/* Navigation menu */}
+            <ScrollView contentContainerStyle={styles.menuContainer}>
+                <View style={styles.activitiesHeader}>
+                    <Text style={styles.activitiesHeaderText}>Activities</Text>
                 </View>
-            ))}
-        </ScrollView>
-    </View>
-);
-};
+                {rows.map((rowItems, rowIndex) => (
+                    <View key={rowIndex} style={styles.menuRow}>
+                        {rowItems.map((item, index) => (
+                            <TouchableOpacity
+                                key={index}
+                                style={styles.menuItemContainer}
+                                onPress={() => {
+                                    // navigation.dispatch(StackActions.push('CallPlanStack', {
+                                    //     screen: 'CallPlan',
+                                    // }));
+                                        navigateToStack(navigation, item.navigation.stack, item.navigation.screen)
+                                }}
+                            >
+                                <MenuItem
+                                    title={item.title}
+                                    subItems={item.icon}
+                                />
+                            </TouchableOpacity>
+                        ))}
+                        {/* Add empty views to maintain 3-item layout */}
+                        {Array.from({length: 3 - rowItems.length}).map((_, i) => (
+                            <View key={`empty-${i}`} style={styles.emptyMenuItem}/>
+                        ))}
+                    </View>
+                ))}
+            </ScrollView>
+        </View>
+    );
+}
 
 // Reusable menu item component
-const MenuItem = ({ title, subItems }: { title: string; subItems: any }) => {
+const MenuItem = ({title, subItems}: { title: string; subItems: any }) => {
     return (
         <View style={styles.menuItem}>
             <Text style={styles.menuTitle}>{title}</Text>
-                <View style={styles.subMenuItem}>
-                    <Ionicons
-                        name={subItems}
-                        size={20}
-                        color="#555"
-                        style={styles.icon}
-                    />
-                </View>
+            <View style={styles.subMenuItem}>
+                <Ionicons
+                    name={subItems}
+                    size={20}
+                    color="#555"
+                    style={styles.icon}
+                />
+            </View>
         </View>
     );
 };
@@ -137,10 +161,12 @@ const styles = StyleSheet.create({
     },
     profileSection: {
         alignItems: 'center',
+        backdropFilter: 'blur(30px)',
+        borderRadius: 10,
         marginBottom: 30,
         paddingBottom: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
+        borderWidth: 1,
+        borderColor: '#eee',
     },
     profileText: {
         fontWeight: 'bold',
@@ -160,30 +186,30 @@ const styles = StyleSheet.create({
     menuRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        gap: 16,
-        minWidth: '28%',
+        gap: 5,
+    },
+    menuItemContainer: {
+        flex: 1,  // This ensures equal width for all items
+        minWidth: 0, // Important for text truncation if needed
+        paddingHorizontal: 4
     },
     menuItem: {
-        flex: 1,  // This makes items in a row share equal width
         borderWidth: 1,
         borderColor: '#ddd',
-        marginHorizontal:4,
-        marginBottom:4,
         borderRadius: 5,
         padding: 16,
         backgroundColor: 'white',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
-        minWidth: '28%', // Ensures only 2 items fit per row (considering gap)
     },
     emptyMenuItem: {
         flex: 1,
     },
     menuTitle: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: 'bold',
         marginBottom: 8,
         color: '#333',

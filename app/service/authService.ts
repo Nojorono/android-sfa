@@ -18,11 +18,13 @@ interface ForgetPasswordResponse {
 
 class AuthServices {
     // Login function: Accepts credentials, performs authentication, and stores the token
-    static async login(email: string, password: string): Promise<LoginResponse> {
+    static async login(email: string, password: string , ip_address:string, device_info:string): Promise<LoginResponse> {
         try {
             const response = await axiosInstance.post('/auth/login', {
                 email,
                 password,
+                ip_address,
+                device_info
             });
             return response.data
         } catch (error: any) {
@@ -30,7 +32,7 @@ class AuthServices {
                 type: 'error',
                 text1: 'Login Failed',
                 text2: error.response?.data?.message || 'An error occurred during login',
-                position: 'bottom',
+                position: 'top',
             });
             throw error
         }

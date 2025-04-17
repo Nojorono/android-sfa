@@ -4,10 +4,13 @@ import HomeScreen from "@/app/screen/HomeScreen";
 import {Text, View} from "react-native";
 import {NavigatorScreenParams} from "@react-navigation/native";
 import CallPlanNavigator, {CallPlanParamList} from "@/app/screen/navigation/CallPlanNavigator";
+import DashboardNavigator, {DashboardParamList} from "@/app/screen/navigation/DashboardNavigator";
 
 export type MainTabParamList = {
     Home: undefined;
-    CallPlanStack: NavigatorScreenParams<CallPlanParamList>;
+    CallPlanStack:NavigatorScreenParams<CallPlanParamList>;
+    DashboardStack:NavigatorScreenParams<DashboardParamList>;
+
 };
 const Stack = createStackNavigator<MainTabParamList>();
 
@@ -35,6 +38,11 @@ const MainNavigator = () => (
         <Stack.Screen
             name="CallPlanStack"
             component={CallPlanNavigator}
+            options={{ headerShown: false }}
+        />
+        <Stack.Screen
+            name="DashboardStack"
+            component={DashboardNavigator}
             options={{ headerShown: false }}
         />
     </Stack.Navigator>

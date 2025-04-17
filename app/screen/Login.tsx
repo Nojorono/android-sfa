@@ -12,6 +12,11 @@ import {useLoadingStore} from "@/app/store/useLoadingStore";
 import AuthServices from "@/app/service/authService";
 import {Ionicons} from "@expo/vector-icons";
 import ButtonComponent from "@/components/ButtonComponent";
+import * as Network from 'expo-network';
+import {getOrCreateDeviceId} from "@/app/util/deviceId";
+// import DeviceInfo from 'react-native-device-info';
+
+
 
 // Get screen dimensions
 const {width, height} = Dimensions.get('window');
@@ -29,11 +34,27 @@ export default function LoginScreen() {
     const {control, handleSubmit, formState: {errors}, setValue} = useForm<FormData>();
     const {setLoading} = useLoadingStore();
     const [email, setEmail] = useState('');
+    const [deviceId, setDeviceId] = useState('');
+    const [ipAddress, setIpAddress] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
 
 
     useEffect(() => {
+        const loadDeviceId = async () => {
+            setLoading(true);
+            try {
+                const address = await Network.getIpAddressAsync();
+                setIpAddress(address);
+                const id = await getOrCreateDeviceId();
+                setDeviceId(id);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         const initializeAuthState = async () => {
             setLoading(true);
             await loadAuthState(useAuthStore.setState);
@@ -55,8 +76,10 @@ export default function LoginScreen() {
             }
         };
 
+        loadDeviceId()
         initializeAuthState();
         loadCredentials();
+
     }, [setLoading]);
 
     // console.log(`User:${user}`, `isAuthenticated:${isAuthenticated}`, `accessToken:${accessToken}`)
@@ -67,7 +90,7 @@ export default function LoginScreen() {
         if (email && password) {
             try {
                 setLoading(true);
-                const response = await AuthServices.login(email, password);
+                const response = await AuthServices.login(email, password,ipAddress,deviceId);
                 if (response.statusCode === 200) {
                     if (rememberMe) {
                         // Save credentials

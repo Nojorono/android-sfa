@@ -1,22 +1,22 @@
 import React from 'react';
 import {createStackNavigator} from "@react-navigation/stack";
-import CallPlanScreen from "@/app/screen/menu/CallPlan/CallPlanScreen";
 import {Text, View} from "react-native";
+import DashboardScreen from "@/app/screen/menu/dashboard/DashboardScreen";
 
-export type CallPlanParamList = {
-    CallPlan: undefined;
-    ReportKas:undefined;
-    ReportBtb:undefined;
+export type DashboardParamList = {
+    Dashboard: undefined;
+    ReportAwal:undefined;
+    ReportAkhir:undefined;
 };
-const Stack = createStackNavigator<CallPlanParamList>();
+const Stack = createStackNavigator<DashboardParamList>();
 
 const CallPlanNavigator = () => (
     <Stack.Navigator
-        initialRouteName="CallPlan"
+        initialRouteName="Dashboard"
     >
         <Stack.Screen
-            name="CallPlan"
-            component={CallPlanScreen}
+            name="Dashboard"
+            component={DashboardScreen}
             options={{
                 headerTitle: () => (
                     <View style={{
@@ -31,14 +31,6 @@ const CallPlanNavigator = () => (
                 ),
             }}
         />
-        {/*<Stack.Screen*/}
-        {/*    name="ReportKas"*/}
-        {/*    component={CallPlanScreen}*/}
-        {/*/>*/}
-        {/*<Stack.Screen*/}
-        {/*    name="ReportBtb"*/}
-        {/*    component={CallPlanScreen}*/}
-        {/*/>*/}
     </Stack.Navigator>
 );
 
