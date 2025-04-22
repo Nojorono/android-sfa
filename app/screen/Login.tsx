@@ -5,15 +5,15 @@ import {useForm, Controller} from 'react-hook-form';
 import Toast from "react-native-toast-message";
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from "@react-navigation/stack";
-import {loadAuthState, useAuthStore} from "../store/useAuthStore";
+import {loadAuthState, useAuthStore} from "@/store/useAuthStore";
 import {AuthStackParamList} from "./navigation/AuthNavigator";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {useLoadingStore} from "@/app/store/useLoadingStore";
+import {useLoadingStore} from "@/store/useLoadingStore";
 import AuthServices from "@/app/service/authService";
 import {Ionicons} from "@expo/vector-icons";
 import ButtonComponent from "@/components/ButtonComponent";
 import * as Network from 'expo-network';
-import {getOrCreateDeviceId} from "@/app/util/deviceId";
+import {getOrCreateDeviceId} from "@/util/deviceId";
 // import DeviceInfo from 'react-native-device-info';
 
 

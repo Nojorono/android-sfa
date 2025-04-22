@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { loadAuthState, useAuthStore } from './store/useAuthStore';
+import { loadAuthState, useAuthStore } from '@/store/useAuthStore';
 import AuthNavigator from './screen/navigation/AuthNavigator';
 import { StatusBar } from 'react-native';
-import { useLoadingStore } from './store/useLoadingStore';
+import { useLoadingStore } from '@/store/useLoadingStore';
 import MainNavigator from "@/app/screen/navigation/MainNavigator";
 
 const AppNavigator = () => {

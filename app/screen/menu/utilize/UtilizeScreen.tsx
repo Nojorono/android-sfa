@@ -1,37 +1,24 @@
 import React from 'react';
 import {Alert, StyleSheet, ScrollView, Text, TouchableOpacity, View} from "react-native";
-import {useLoadingStore} from "@/store/useLoadingStore";
-import Toast from "react-native-toast-message";
-import {useAuthStore} from "@/store/useAuthStore";
-import Ionicons from '@expo/vector-icons/Ionicons';
-import {NavigationProp, StackActions, useNavigation} from "@react-navigation/native";
+import {Ionicons} from "@expo/vector-icons";
+import {useNavigation} from "@react-navigation/native";
+import {StackNavigationProp} from "@react-navigation/stack";
 import {CallPlanParamList} from "@/app/screen/navigation/CallPlanNavigator";
-import {BlurView} from "expo-blur";
+import {UtilizeParamList} from "@/app/screen/navigation/UtilizeNavigator";
 import {navigateToStack} from "@/util/helper";
+import Toast from "react-native-toast-message";
+import {useLoadingStore} from "@/store/useLoadingStore";
+import {useAuthStore} from "@/store/useAuthStore";
 
-function HomeScreen() {
-    const navigation = useNavigation<NavigationProp<CallPlanParamList>>();
+type NavigationProp = StackNavigationProp<UtilizeParamList, 'Utilize'>;
+export default function UtilizeScreen() {
     const {setLoading} = useLoadingStore();
     const {clearAuth} = useAuthStore();
+    const navigation = useNavigation<NavigationProp>();
     const menuItems = [
-        {title: "Dashboard", icon: 'speedometer-outline', navigation: {stack: 'DashboardStack', screen: 'Dashboard'}},
-        {title: "Call Plan", icon: 'cart-outline', navigation: {stack: 'CallPlanStack', screen: 'CallPlan'}},
-        {title: "Inventory", icon: 'cube-outline', navigation: {stack: 'InventoryStack', screen: 'Inventory'}},
-        {title: "Sales", icon: 'cash-outline', navigation: {stack: 'SalesStack', screen: 'Sales'}},
-        {title: "Customers", icon: 'people-outline', navigation: {stack: 'CustomersStack', screen: 'Customers'}},
-        {title: "Reports", icon: 'document-text-outline', navigation: {stack: 'ReportsStack', screen: 'Reports'}},
-        {title: "Analytics", icon: 'stats-chart-outline', navigation: {stack: 'AnalyticsStack', screen: 'Analytics'}},
-        {title: "Messages", icon: 'chatbubbles-outline', navigation: {stack: 'MessagesStack', screen: 'Messages'}},
-        {title: "Calendar", icon: 'calendar-outline', navigation: {stack: 'CalendarStack', screen: 'Calendar'}},
-        {title: "Tasks", icon: 'checkbox-outline', navigation: {stack: 'TasksStack', screen: 'Tasks'}},
-        {title: "Documents", icon: 'folder-outline', navigation: {stack: 'DocumentsStack', screen: 'Documents'}},
-        {title: "Utilize", icon: 'settings-outline', navigation: {stack: 'UtilizeStack', screen: 'Utilize'}},
-        {
-            title: "Notifications",
-            icon: 'notifications-outline',
-            navigation: {stack: 'NotificationsStack', screen: 'Notifications'}
-        },
-        {title: "Help Center", icon: 'help-circle-outline', navigation: {stack: 'HelpStack', screen: 'HelpCenter'}},
+        { title: "Utilize", icon: 'speedometer-outline' },
+        { title: "Sync", icon: 'cart-outline' },
+        { title: "Logout", icon: 'cart-outline' },
     ];
 
     // Split menu items into chunks of 2 for each row
@@ -40,7 +27,6 @@ function HomeScreen() {
     for (let i = 0; i < menuItems.length; i += chunkSize) {
         rows.push(menuItems.slice(i, i + chunkSize));
     }
-
 
     const handleLogout = () => {
         Alert.alert("Confirm Logout", "Are you sure you want to logout?", [
@@ -64,33 +50,24 @@ function HomeScreen() {
         ]);
     };
 
-    const handleMenuClick = (stack:any ,nav:any) => {
-        navigateToStack(navigation, stack, nav)
+    const handleMenuClick = (stack:any) => {
+        console.log(stack);
+        if(stack === "Logout") {
+            handleLogout()
+        }
     }
     return (
-
         <View style={styles.container}>
-            <View style={{zIndex:10}}>
-                <Toast topOffset={1}/>
-            </View>
             {/* User profile section */}
-            <BlurView
-                intensity={80} // 0-100
-                tint="extraLight" // 'dark' | 'light' | 'default'
-                style={styles.profileSection}
-            >
+            <View style={styles.profileSection}>
                 <Text style={styles.profileText}>LPGKV-LPGKEVIN</Text>
                 <Text style={styles.profileSubtext}>LPG SKITAKLA</Text>
-                <TouchableOpacity onPress={handleLogout}>
-                    <Text>logout</Text>
-                </TouchableOpacity>
-            </BlurView>
-
+            </View>
 
             {/* Navigation menu */}
             <ScrollView contentContainerStyle={styles.menuContainer}>
                 <View style={styles.activitiesHeader}>
-                    <Text style={styles.activitiesHeaderText}>Activities</Text>
+                    <Text style={styles.activitiesHeaderText}>Utilize &gt; Menu</Text>
                 </View>
                 {rows.map((rowItems, rowIndex) => (
                     <View key={rowIndex} style={styles.menuRow}>
@@ -99,7 +76,7 @@ function HomeScreen() {
                                 key={index}
                                 style={styles.menuItemContainer}
                                 onPress={() => {
-                                    handleMenuClick(item.navigation.stack, item.navigation.screen)
+                                    handleMenuClick(item.title)
                                 }}
                             >
                                 <MenuItem
@@ -108,19 +85,19 @@ function HomeScreen() {
                                 />
                             </TouchableOpacity>
                         ))}
-                        {/* Add empty views to maintain 3-item layout */}
-                        {Array.from({length: 3 - rowItems.length}).map((_, i) => (
-                            <View key={`empty-${i}`} style={styles.emptyMenuItem}/>
-                        ))}
+                        {/* Add empty view if odd number of items to maintain layout */}
+                        {rowItems.length < chunkSize && (
+                            <View style={styles.emptyMenuItem} />
+                        )}
                     </View>
                 ))}
             </ScrollView>
         </View>
     );
-}
+};
 
 // Reusable menu item component
-const MenuItem = ({title, subItems}: { title: string; subItems: any }) => {
+const MenuItem = ({ title, subItems }: { title: string; subItems: any }) => {
     return (
         <View style={styles.menuItem}>
             <Text style={styles.menuTitle}>{title}</Text>
@@ -158,12 +135,10 @@ const styles = StyleSheet.create({
     },
     profileSection: {
         alignItems: 'center',
-        backdropFilter: 'blur(30px)',
-        borderRadius: 10,
         marginBottom: 30,
-        paddingVertical: 15,
-        borderWidth: 1,
-        borderColor: '#eee',
+        paddingBottom: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee',
     },
     profileText: {
         fontWeight: 'bold',
@@ -183,30 +158,30 @@ const styles = StyleSheet.create({
     menuRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        gap: 5,
-    },
-    menuItemContainer: {
-        flex: 1,  // This ensures equal width for all items
-        minWidth: 0, // Important for text truncation if needed
-        paddingHorizontal: 4
+        gap: 16,
+        minWidth: '25%',
     },
     menuItem: {
+        flex: 1,  // This makes items in a row share equal width
         borderWidth: 1,
         borderColor: '#ddd',
         borderRadius: 5,
+        marginHorizontal:4,
+        marginBottom:4,
         padding: 16,
         backgroundColor: 'white',
         shadowColor: '#000',
-        shadowOffset: {width: 0, height: 2},
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
+        minWidth: '25%', // Ensures only 2 items fit per row (considering gap)
     },
     emptyMenuItem: {
         flex: 1,
     },
     menuTitle: {
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 8,
         color: '#333',
@@ -238,7 +213,10 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '600',
     },
+    menuItemContainer: {
+        flex: 1,  // This ensures equal width for all items
+        minWidth: 0, // Important for text truncation if needed
+        paddingHorizontal: 4
+    },
 });
-
-export default HomeScreen;
 

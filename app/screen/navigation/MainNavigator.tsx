@@ -5,11 +5,13 @@ import {Text, View} from "react-native";
 import {NavigatorScreenParams} from "@react-navigation/native";
 import CallPlanNavigator, {CallPlanParamList} from "@/app/screen/navigation/CallPlanNavigator";
 import DashboardNavigator, {DashboardParamList} from "@/app/screen/navigation/DashboardNavigator";
+import UtilizeNavigator, {UtilizeParamList} from "@/app/screen/navigation/UtilizeNavigator";
 
 export type MainTabParamList = {
     Home: undefined;
     CallPlanStack:NavigatorScreenParams<CallPlanParamList>;
     DashboardStack:NavigatorScreenParams<DashboardParamList>;
+    UtilizeStack:NavigatorScreenParams<UtilizeParamList>;
 
 };
 const Stack = createStackNavigator<MainTabParamList>();
@@ -43,6 +45,11 @@ const MainNavigator = () => (
         <Stack.Screen
             name="DashboardStack"
             component={DashboardNavigator}
+            options={{ headerShown: false }}
+        />
+        <Stack.Screen
+            name="UtilizeStack"
+            component={UtilizeNavigator}
             options={{ headerShown: false }}
         />
     </Stack.Navigator>
