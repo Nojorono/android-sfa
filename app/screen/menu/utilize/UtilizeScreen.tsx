@@ -9,9 +9,13 @@ import {navigateToStack} from "@/util/helper";
 import Toast from "react-native-toast-message";
 import {useLoadingStore} from "@/store/useLoadingStore";
 import {useAuthStore} from "@/store/useAuthStore";
+import DashboardStyles from "@/util/DashboardStyles";
+import GlobalStyles from "@/util/GlobalStyles";
 
 type NavigationProp = StackNavigationProp<UtilizeParamList, 'Utilize'>;
 export default function UtilizeScreen() {
+
+    const styles = GlobalStyles()
     const {setLoading} = useLoadingStore();
     const {clearAuth} = useAuthStore();
     const navigation = useNavigation<NavigationProp>();
@@ -98,6 +102,7 @@ export default function UtilizeScreen() {
 
 // Reusable menu item component
 const MenuItem = ({ title, subItems }: { title: string; subItems: any }) => {
+    const styles = GlobalStyles()
     return (
         <View style={styles.menuItem}>
             <Text style={styles.menuTitle}>{title}</Text>
@@ -112,111 +117,3 @@ const MenuItem = ({ title, subItems }: { title: string; subItems: any }) => {
         </View>
     );
 };
-
-// Styles
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        padding: 16,
-    },
-    header: {
-        flexDirection: 'row',
-        marginBottom: 20,
-        alignItems: 'center',
-        justifyContent: 'space-between'
-    },
-    time: {
-        fontSize: 16,
-    },
-    date: {
-        fontSize: 16,
-        color: '#666',
-    },
-    profileSection: {
-        alignItems: 'center',
-        marginBottom: 30,
-        paddingBottom: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
-    },
-    profileText: {
-        fontWeight: 'bold',
-        fontSize: 20,
-    },
-    profileSubtext: {
-        fontWeight: 'bold',
-        fontSize: 14,
-        color: '#666',
-    },
-    menuContainer: {
-        flexDirection: 'column',
-        gap: 16,
-        borderWidth: 0.1,
-        borderRadius: 5,
-    },
-    menuRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        gap: 16,
-        minWidth: '25%',
-    },
-    menuItem: {
-        flex: 1,  // This makes items in a row share equal width
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 5,
-        marginHorizontal:4,
-        marginBottom:4,
-        padding: 16,
-        backgroundColor: 'white',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-        minWidth: '25%', // Ensures only 2 items fit per row (considering gap)
-    },
-    emptyMenuItem: {
-        flex: 1,
-    },
-    menuTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 8,
-        color: '#333',
-    },
-    subMenuItem: {
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-        marginVertical: 4,
-        borderRadius: 4,
-    },
-    subMenuText: {
-        fontSize: 14,
-        color: '#555',
-    },
-    icon: {
-        marginRight: 10,
-        width: 24, // Fixed width for alignment
-    },
-    activitiesHeader: {
-        backgroundColor: '#2F3193', // Purple-blue background
-        borderTopLeftRadius: 5,     // Rounded top-left corner
-        borderTopRightRadius: 5,    // Rounded top-right corner
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        marginBottom: 16,
-    },
-    activitiesHeaderText: {
-        color: 'white',
-        fontSize: 18,
-        fontWeight: '600',
-    },
-    menuItemContainer: {
-        flex: 1,  // This ensures equal width for all items
-        minWidth: 0, // Important for text truncation if needed
-        paddingHorizontal: 4
-    },
-});
-

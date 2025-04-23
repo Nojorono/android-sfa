@@ -1,6 +1,6 @@
 import React from 'react';
 import {createStackNavigator} from "@react-navigation/stack";
-import CallPlanScreen from "@/app/screen/menu/CallPlan/CallPlanScreen";
+import CallPlanScreen from "@/app/screen/menu/callplan/CallPlanScreen";
 import {Text, View} from "react-native";
 
 export type CallPlanParamList = {
