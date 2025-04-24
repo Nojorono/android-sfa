@@ -7,6 +7,7 @@ import CallPlanNavigator, {CallPlanParamList} from "@/app/screen/navigation/Call
 import DashboardNavigator, {DashboardParamList} from "@/app/screen/navigation/DashboardNavigator";
 import UtilizeNavigator, {UtilizeParamList} from "@/app/screen/navigation/UtilizeNavigator";
 import JourneyEndNavigator, {JourneyEndParamList} from "@/app/screen/navigation/JourneyEndNavigator";
+import VisitNavigator, {VisitParamList} from "@/app/screen/navigation/VisitNavigator";
 
 export type MainTabParamList = {
     Home: undefined;
@@ -14,6 +15,7 @@ export type MainTabParamList = {
     DashboardStack:NavigatorScreenParams<DashboardParamList>;
     UtilizeStack:NavigatorScreenParams<UtilizeParamList>;
     JourneyEndStack:NavigatorScreenParams<JourneyEndParamList>;
+    VisitStack:NavigatorScreenParams<VisitParamList>;
 
 };
 const Stack = createStackNavigator<MainTabParamList>();
@@ -57,6 +59,11 @@ const MainNavigator = () => (
         <Stack.Screen
             name="JourneyEndStack"
             component={JourneyEndNavigator}
+            options={{ headerShown: false }}
+        />
+        <Stack.Screen
+            name="VisitStack"
+            component={VisitNavigator}
             options={{ headerShown: false }}
         />
     </Stack.Navigator>

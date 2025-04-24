@@ -1,6 +1,6 @@
 // src/services/authService.ts
 import AsyncStorage from '@react-native-async-storage/async-storage';  // Use the correct AsyncStorage import
-import axiosInstance from "../config/axiosInstance";
+import axiosInstance from "@/config/axiosInstance";
 import Toast from "react-native-toast-message";
 
 interface LoginResponse {

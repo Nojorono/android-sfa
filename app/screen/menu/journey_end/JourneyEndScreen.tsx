@@ -5,16 +5,20 @@ import {useNavigation} from "@react-navigation/native";
 import {StackNavigationProp} from "@react-navigation/stack";
 import {JourneyEndParamList} from "@/app/screen/navigation/JourneyEndNavigator";
 import GlobalStyles from "@/util/GlobalStyles";
-import CustomModal from "@/components/CustomModal";
+import CustomModalInput from "@/components/CustomModalInput";
 import {navigateToStack} from "@/util/helper";
 import Toast from "react-native-toast-message";
+import CustomModalText from '@/components/CustomModalText';
 
 type NavigationProp = StackNavigationProp<JourneyEndParamList, 'JourneyEnd'>;
 export default function JourneyEndScreen() {
     const navigation = useNavigation<NavigationProp>();
     const [modalVisible, setModalVisible] = useState(false);
+    const [modalCPVisible, setModalCPVisible] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [modalTitle, setModalTitle] = useState('');
+    const [modalCPTitle, setModalCPTitle] = useState('');
+    const [modalDescription, setModalDescription] = useState('');
     const menuItems = [
         {title: "Akhiri Perjalanan", icon: 'speedometer-outline', navigation: 'journey_end', flag: true},
         {title: "Akhiri CallPlan", icon: 'cart-outline', navigation: 'callplan_end', flag: true},
@@ -27,32 +31,16 @@ export default function JourneyEndScreen() {
         rows.push(menuItems.slice(i, i + chunkSize));
     }
     const endCallPlan = () => {
-        Alert.alert("Konfirmasi Akhiri Call Plan", "Apakah kamu yakin akan mengakhiri Call Plan?", [
-            {
-                text: "Cancel",
-                style: "cancel",
-            },
-            {
-                text: "Selesai",
-                onPress: () => {
-                    // setLoading(true);
-                    // clearAuth();
-                    Toast.show({
-                        type: "success",
-                        text1: "Success",
-                        text2: "Logout Successful",
-                    });
-                    // setTimeout(() => setLoading(false), 1000);
-                },
-            },
-        ]);
+
     };
     const handleMenuClick =(navigation: string) => {
         if (navigation === 'journey_end') {
             setModalVisible(true)
             setModalTitle('Akhiri Perjalanan')
         }else if (navigation === 'callplan_end') {
-            endCallPlan()
+            setModalCPVisible(true)
+            setModalCPTitle('Akhiri Call Plan')
+            setModalDescription('Apakah anda yakin akan mengakhiri Call Plan ?')
         }
 
     }
@@ -70,12 +58,19 @@ export default function JourneyEndScreen() {
                 <Text style={styles.profileSubtext}>LPG SKITAKLA</Text>
             </View>
 
-            <CustomModal
+            <CustomModalInput
                 title={modalTitle}
                 visible={modalVisible}
                 onClose={() => setModalVisible(false)}
                 value={inputValue}
                 onChange={setInputValue}
+                onSubmit={handleSubmitModal}
+            />
+            <CustomModalText
+                title={modalCPTitle}
+                visible={modalCPVisible}
+                onClose={() => setModalCPVisible(false)}
+                description={modalDescription}
                 onSubmit={handleSubmitModal}
             />
 
@@ -84,6 +79,7 @@ export default function JourneyEndScreen() {
                 <View style={styles.activitiesHeader}>
                     <Text style={styles.activitiesHeaderText}>Akhiri Perjalanan &gt; Menu</Text>
                 </View>
+
                 {rows.map((rowItems, rowIndex) => (
                     <View key={rowIndex} style={styles.menuRow}>
                         {rowItems.map((item, index) => {

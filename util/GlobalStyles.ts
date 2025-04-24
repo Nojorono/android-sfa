@@ -45,6 +45,7 @@ const GlobalStyles = () => {
         menuContainer: {
             flexDirection: 'column',
             gap: 16,
+            paddingBottom:10
         },
         menuRow: {
             flexDirection: 'row',
@@ -92,11 +93,12 @@ const GlobalStyles = () => {
             width: 24, // Fixed width for alignment
         },
         activitiesHeader: {
+            backgroundColor: '#002761',
             borderTopLeftRadius: 5,     // Rounded top-left corner
             borderTopRightRadius: 5,    // Rounded top-right corner
-            paddingVertical: 4,
+            paddingVertical: 12,
             paddingHorizontal: 16,
-            marginBottom: 10,
+            marginBottom: 16,
         },
         newsHeader: {
             backgroundColor: '#002761', // Purple-blue background
@@ -107,7 +109,7 @@ const GlobalStyles = () => {
             marginBottom: 16,
         },
         activitiesHeaderText: {
-            color: '#3b4554',
+            color: 'white',
             fontSize: 15,
             fontWeight: '600',
         },

@@ -1,4 +1,4 @@
-// components/CustomModal.tsx
+// components/CustomModalInput.tsx
 
 import React from 'react';
 import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
@@ -12,7 +12,7 @@ type Props = {
     title: string;
 };
 
-export default function CustomModal({ visible, onClose, value, onChange, onSubmit ,title}: Props) {
+export default function CustomModalInput({ visible, onClose, value, onChange, onSubmit ,title}: Props) {
     return (
         <Modal
             animationType="slide"

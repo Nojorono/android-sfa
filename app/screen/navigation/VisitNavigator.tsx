@@ -3,19 +3,20 @@ import {createStackNavigator} from "@react-navigation/stack";
 import CallPlanScreen from "@/app/screen/menu/callplan/CallPlanScreen";
 import {Text, View} from "react-native";
 import JourneyEndScreen from "@/app/screen/menu/journey_end/JourneyEndScreen";
+import VisitScreen from "@/app/screen/menu/visit/VisitScreen";
 
-export type JourneyEndParamList = {
-    JourneyEnd: undefined;
+export type VisitParamList = {
+    Visit: undefined;
 };
-const Stack = createStackNavigator<JourneyEndParamList>();
+const Stack = createStackNavigator<VisitParamList>();
 
-const CallPlanNavigator = () => (
+const VisitNavigator = () => (
     <Stack.Navigator
-        initialRouteName="JourneyEnd"
+        initialRouteName="Visit"
     >
         <Stack.Screen
-            name="JourneyEnd"
-            component={JourneyEndScreen}
+            name="Visit"
+            component={VisitScreen}
             options={{
                 headerTitle: () => (
                     <View style={{
@@ -33,4 +34,4 @@ const CallPlanNavigator = () => (
     </Stack.Navigator>
 );
 
-export default CallPlanNavigator;
+export default VisitNavigator;

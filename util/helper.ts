@@ -4,7 +4,7 @@ import Toast from "react-native-toast-message"; // adjust path as needed
 
 
 function isValidStackRoute(route: string): route is keyof MainTabParamList {
-    return ['DashboardStack', 'CallPlanStack', "UtilizeStack", "JourneyEndStack"].includes(route);
+    return ['DashboardStack', 'CallPlanStack', "UtilizeStack", "JourneyEndStack", "VisitStack"].includes(route);
 }
 
 export function navigateToStack(

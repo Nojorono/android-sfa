@@ -1,8 +1,7 @@
 import React from 'react';
 import {createStackNavigator} from "@react-navigation/stack";
-import CallPlanScreen from "@/app/screen/menu/callplan/CallPlanScreen";
 import {Text, View} from "react-native";
-import JourneyEndScreen from "@/app/screen/menu/JourneyEnd/JourneyEndScreen";
+import JourneyEndScreen from "@/app/screen/menu/journey_end/JourneyEndScreen";
 
 export type JourneyEndParamList = {
     JourneyEnd: undefined;

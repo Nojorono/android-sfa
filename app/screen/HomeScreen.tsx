@@ -9,7 +9,7 @@ import {CallPlanParamList} from "@/app/screen/navigation/CallPlanNavigator";
 import {BlurView} from "expo-blur";
 import {navigateToStack} from "@/util/helper";
 import GlobalStyles from "@/util/GlobalStyles";
-import CustomModal from "@/components/CustomModal";
+import CustomModalInput from "@/components/CustomModalInput";
 import ImageCarousel from "@/components/ImageCorousel";
 
 function HomeScreen() {
@@ -39,7 +39,7 @@ function HomeScreen() {
             navigation: {stack: 'JourneyStartStack', screen: 'JourneyStart'},
             flag: true
         },
-        {title: "Sales", icon: 'cash-outline', navigation: {stack: 'SalesStack', screen: 'Sales'}, flag: true},
+        {title: "Kunjungan", icon: 'cash-outline', navigation: {stack: 'VisitStack', screen: 'Visit'}, flag: true},
         {
             title: "Customers",
             icon: 'people-outline',
@@ -56,21 +56,21 @@ function HomeScreen() {
             title: "Analytics",
             icon: 'stats-chart-outline',
             navigation: {stack: 'AnalyticsStack', screen: 'Analytics'},
-            flag: true
+            flag: false
         },
         {
             title: "Messages",
             icon: 'chatbubbles-outline',
             navigation: {stack: 'MessagesStack', screen: 'Messages'},
-            flag: true
+            flag: false
         },
         {
             title: "Calendar",
             icon: 'calendar-outline',
             navigation: {stack: 'CalendarStack', screen: 'Calendar'},
-            flag: true
+            flag: false
         },
-        {title: "Tasks", icon: 'checkbox-outline', navigation: {stack: 'TasksStack', screen: 'Tasks'}, flag: true},
+        {title: "Tasks", icon: 'checkbox-outline', navigation: {stack: 'TasksStack', screen: 'Tasks'}, flag: false},
         {
             title: "Akhiri Perjalanan",
             icon: 'folder-outline',
@@ -85,7 +85,7 @@ function HomeScreen() {
         {
             title: "Notifications",
             icon: 'notifications-outline',
-            navigation: {stack: 'NotificationsStack', screen: 'Notifications'}, flag: true
+            navigation: {stack: 'NotificationsStack', screen: 'Notifications'}, flag: false
         },
         {
             title: "Help Center",
@@ -133,7 +133,7 @@ function HomeScreen() {
                 <Text style={styles.profileSubtext}>LPG SKITAKLA</Text>
             </BlurView>
 
-
+            <ScrollView contentContainerStyle={styles.menuContainer}  stickyHeaderIndices={[2]}>
             {/* Navigation menu */}
             <View style={styles.newsHeader}>
                 <Text style={styles.newsHeaderText}>Berita Harian</Text>
@@ -142,7 +142,7 @@ function HomeScreen() {
             <View style={styles.activitiesHeader}>
                 <Text style={styles.activitiesHeaderText}>Activities</Text>
             </View>
-            <CustomModal
+            <CustomModalInput
                 title={modalTitle}
                 visible={modalVisible}
                 onClose={() => setModalVisible(false)}
@@ -150,7 +150,7 @@ function HomeScreen() {
                 onChange={setInputValue}
                 onSubmit={handleSubmitModal}
             />
-            <ScrollView contentContainerStyle={styles.menuContainer}>
+
                 {rows.map((rowItems, rowIndex) => (
                     <View key={rowIndex} style={styles.menuRow}>
                         {rowItems.map((item, index) => {

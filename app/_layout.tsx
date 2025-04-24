@@ -7,7 +7,7 @@ import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
 import AppNavigator from "@/app/AppNavigator";
 import Toast from "react-native-toast-message";
-import {getDatabaseInstance} from "@/app/config/db";
+import {getDatabaseInstance} from "@/config/db";
 import {useLoadingStore} from "@/store/useLoadingStore";
 import {BackgroundFetchStatus} from "expo-background-fetch";
 import {OfflineProvider} from "@/app/context/OfflineProvider";
