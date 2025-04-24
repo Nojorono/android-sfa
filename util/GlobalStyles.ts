@@ -92,7 +92,14 @@ const GlobalStyles = () => {
             width: 24, // Fixed width for alignment
         },
         activitiesHeader: {
-            backgroundColor: '#2F3193', // Purple-blue background
+            borderTopLeftRadius: 5,     // Rounded top-left corner
+            borderTopRightRadius: 5,    // Rounded top-right corner
+            paddingVertical: 4,
+            paddingHorizontal: 16,
+            marginBottom: 10,
+        },
+        newsHeader: {
+            backgroundColor: '#002761', // Purple-blue background
             borderTopLeftRadius: 5,     // Rounded top-left corner
             borderTopRightRadius: 5,    // Rounded top-right corner
             paddingVertical: 12,
@@ -100,8 +107,13 @@ const GlobalStyles = () => {
             marginBottom: 16,
         },
         activitiesHeaderText: {
+            color: '#3b4554',
+            fontSize: 15,
+            fontWeight: '600',
+        },
+        newsHeaderText: {
             color: 'white',
-            fontSize: 18,
+            fontSize: 15,
             fontWeight: '600',
         },
     });

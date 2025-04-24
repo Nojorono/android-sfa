@@ -6,12 +6,14 @@ import {NavigatorScreenParams} from "@react-navigation/native";
 import CallPlanNavigator, {CallPlanParamList} from "@/app/screen/navigation/CallPlanNavigator";
 import DashboardNavigator, {DashboardParamList} from "@/app/screen/navigation/DashboardNavigator";
 import UtilizeNavigator, {UtilizeParamList} from "@/app/screen/navigation/UtilizeNavigator";
+import JourneyEndNavigator, {JourneyEndParamList} from "@/app/screen/navigation/JourneyEndNavigator";
 
 export type MainTabParamList = {
     Home: undefined;
     CallPlanStack:NavigatorScreenParams<CallPlanParamList>;
     DashboardStack:NavigatorScreenParams<DashboardParamList>;
     UtilizeStack:NavigatorScreenParams<UtilizeParamList>;
+    JourneyEndStack:NavigatorScreenParams<JourneyEndParamList>;
 
 };
 const Stack = createStackNavigator<MainTabParamList>();
@@ -31,7 +33,7 @@ const MainNavigator = () => (
                         alignItems: 'center',
                         justifyContent: 'space-between'
                     }}>
-                        <Text style={{fontSize:16}}>Sofia</Text>
+                        <Text style={{fontSize:16}}>Sofia Latjuba</Text>
                         <Text style={{fontSize:16, color:'#666'}}>25 Nov 2023</Text>
                     </View>
                 ),
@@ -50,6 +52,11 @@ const MainNavigator = () => (
         <Stack.Screen
             name="UtilizeStack"
             component={UtilizeNavigator}
+            options={{ headerShown: false }}
+        />
+        <Stack.Screen
+            name="JourneyEndStack"
+            component={JourneyEndNavigator}
             options={{ headerShown: false }}
         />
     </Stack.Navigator>
