@@ -7,11 +7,11 @@ import GlobalStyles from "@/util/GlobalStyles";
 import {VisitParamList} from "@/app/screen/navigation/VisitNavigator";
 
 type NavigationProp = StackNavigationProp<VisitParamList, 'Summary'>;
-export default function SummaryRetur() {
+export default function SummaryReturn() {
     const navigation = useNavigation<NavigationProp>();
     const [inputValue, setInputValue] = useState('');
     const menuItems = [
-        {title: "Summary Retur", icon: 'speedometer-outline', navigation: 'in_route', flag: true},
+        {title: "Summary Retur", icon: 'speedometer-outline', navigation: 'SummaryReturn', flag: true},
         {title: "Summary Penagihan", icon: 'cart-outline', navigation: 'summary-penagihan', flag: true},
         {title: "Summary Penjualan", icon: 'cart-outline', navigation: 'summary_route', flag: false},
     ];

@@ -5,6 +5,9 @@ import {useNavigation} from "@react-navigation/native";
 import {StackNavigationProp} from "@react-navigation/stack";
 import GlobalStyles from "@/util/GlobalStyles";
 import {VisitParamList} from "@/app/screen/navigation/VisitNavigator";
+import {navigateToStack} from "@/util/helper";
+import {VALID_ROUTE_NAMES} from "@/config/routes";
+import Toast from "react-native-toast-message";
 
 type NavigationProp = StackNavigationProp<VisitParamList, 'Visit'>;
 export default function VisitScreen() {
@@ -12,9 +15,9 @@ export default function VisitScreen() {
     const [inputValue, setInputValue] = useState('');
     const menuItems = [
         {title: "Pelanggan Dalam Rute", icon: 'speedometer-outline', navigation: 'in_route', flag: true},
-        {title: "Pelanggan Luar Rute", icon: 'cart-outline', navigation: 'out_route', flag: true},
-        {title: "Summary Kunjungan", icon: 'cart-outline', navigation: 'summary_route', flag: false},
-        {title: "Pelanggan Baru", icon: 'cart-outline', navigation: 'new_route', flag: true},
+        {title: "Pelanggan Luar Rute", icon: 'cart-outline', navigation: 'out_route', flag: false},
+        {title: "Summary Kunjungan", icon: 'cart-outline', navigation: 'Summary', flag: true},
+        {title: "Pelanggan Baru", icon: 'cart-outline', navigation: 'new_route', flag: false},
     ];
 
     // Split menu items into chunks of 2 for each row
@@ -23,9 +26,16 @@ export default function VisitScreen() {
     for (let i = 0; i < menuItems.length; i += chunkSize) {
         rows.push(menuItems.slice(i, i + chunkSize));
     }
-    const handleMenuClick =(navigation: string) => {
-
-
+    const handleMenuClick =(nav: any) => {
+        if (VALID_ROUTE_NAMES.includes(nav)) {
+            navigation.navigate(nav);
+        } else {
+            Toast.show({
+                type: 'error',
+                text1: 'Navigation Error',
+                text2: `Screen "${nav}" does not exist.`,
+            });
+        }
     }
 
     return (
@@ -35,7 +45,7 @@ export default function VisitScreen() {
                 <Text style={styles.profileText}>LPGKV-LPGKEVIN</Text>
                 <Text style={styles.profileSubtext}>LPG SKITAKLA</Text>
             </View>
-
+            <Toast/>
             {/* Navigation menu */}
             <ScrollView contentContainerStyle={styles.menuContainer}>
                 <View style={styles.activitiesHeader}>
@@ -50,7 +60,7 @@ export default function VisitScreen() {
                                     key={index}
                                     style={styles.menuItemContainer}
                                     onPress={() => {
-                                        // handleMenuClick(item.navigation)
+                                        handleMenuClick(item.navigation)
                                     }}
                                 >
                                     <MenuItem title={item.title} subItems={item.icon}/>
