@@ -34,6 +34,7 @@ export default function VisitScreen() {
                 type: 'error',
                 text1: 'Navigation Error',
                 text2: `Screen "${nav}" does not exist.`,
+                autoHide:true
             });
         }
     }

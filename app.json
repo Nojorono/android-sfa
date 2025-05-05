@@ -4,16 +4,26 @@
     "slug": "sfa",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/sfa-removebg-preview.png",
+    "icon": "./assets/images/icon-sfa.png",
     "scheme": "demo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/icon-sfa.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/sfa-removebg-preview.png",
+        "backgroundColor": "#ffffff"
+      },
+      "splash": {
+        "image": "./assets/images/icon-sfa.png",
+        "resizeMode": "contain",
         "backgroundColor": "#ffffff"
       }
     },
@@ -27,8 +37,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/sfa-removebg-preview.png",
-          "imageWidth": 200,
+          "image": "./assets/images/icon-sfa.png",
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }

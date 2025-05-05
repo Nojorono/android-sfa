@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Dimensions, View, Text} from 'react-native';
-import {useOffline} from "@/app/context/OfflineProvider";
+import {useOffline} from "@/components/context/OfflineProvider";
 // Get the screen dimensions
 const {width, height} = Dimensions.get('window');
 

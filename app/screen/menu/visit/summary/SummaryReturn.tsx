@@ -5,23 +5,12 @@ import {useNavigation} from "@react-navigation/native";
 import {StackNavigationProp} from "@react-navigation/stack";
 import GlobalStyles from "@/util/GlobalStyles";
 import {VisitParamList} from "@/app/screen/navigation/VisitNavigator";
+import InfoCard from "@/components/SummaryReturComponent";
 
 type NavigationProp = StackNavigationProp<VisitParamList, 'Summary'>;
 export default function SummaryReturn() {
     const navigation = useNavigation<NavigationProp>();
     const [inputValue, setInputValue] = useState('');
-    const menuItems = [
-        {title: "Summary Retur", icon: 'speedometer-outline', navigation: 'SummaryReturn', flag: true},
-        {title: "Summary Penagihan", icon: 'cart-outline', navigation: 'summary-penagihan', flag: true},
-        {title: "Summary Penjualan", icon: 'cart-outline', navigation: 'summary_route', flag: false},
-    ];
-
-    // Split menu items into chunks of 2 for each row
-    const chunkSize = 3;
-    const rows = [];
-    for (let i = 0; i < menuItems.length; i += chunkSize) {
-        rows.push(menuItems.slice(i, i + chunkSize));
-    }
     const handleMenuClick =(navigation: string) => {
 
 
@@ -34,33 +23,14 @@ export default function SummaryReturn() {
                 <View style={styles.activitiesHeader}>
                     <Text style={styles.activitiesHeaderText}>Kunjungan &gt; Summary &gt; Retur</Text>
                 </View>
-                {rows.map((rowItems, rowIndex) => (
-                    <View key={rowIndex} style={styles.menuRow}>
-                        {rowItems.map((item, index) => {
-                            const isEnabled = item.flag !== false;
-                            return isEnabled ? (
-                                <TouchableOpacity
-                                    key={index}
-                                    style={styles.menuItemContainer}
-                                    onPress={() => {
-                                        // handleMenuClick(item.navigation)
-                                    }}
-                                >
-                                    <MenuItem title={item.title} subItems={item.icon}/>
-                                </TouchableOpacity>
-                            ) : (
-                                <View key={index} style={[styles.menuItemContainer, {opacity: 0.5}]}>
-                                    <MenuItem title={item.title} subItems={'close-circle-outline'} disabled/>
-                                </View>
-                            );
-                        })}
-
-                        {/* Fill empty items if row isn't full */}
-                        {Array.from({length: 3 - rowItems.length}).map((_, i) => (
-                            <View key={`empty-${i}`} style={styles.emptyMenuItem}/>
-                        ))}
-                    </View>
-                ))}
+                <InfoCard
+                    title="User Info"
+                    items={[
+                        { label: 'Email', subtext: 'john@example.com' },
+                        { label: 'Phone', subtext: '+628123456789' },
+                        { label: 'City', subtext: 'Jakarta' },
+                    ]}
+                />
             </ScrollView>
         </View>
     );

@@ -1,25 +1,33 @@
-// app/auth/login.tsx
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, TextInput, View, Image, TouchableOpacity, Dimensions} from 'react-native';
-import {useForm, Controller} from 'react-hook-form';
-import Toast from "react-native-toast-message";
-import {useNavigation} from '@react-navigation/native';
-import {StackNavigationProp} from "@react-navigation/stack";
-import {loadAuthState, useAuthStore} from "@/store/useAuthStore";
-import {AuthStackParamList} from "./navigation/AuthNavigator";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import {useLoadingStore} from "@/store/useLoadingStore";
-import AuthServices from "@/app/service/authService";
-import {Ionicons} from "@expo/vector-icons";
-import ButtonComponent from "@/components/ButtonComponent";
+import React, { useEffect, useState } from 'react';
+import {
+    View,
+    Text,
+    TextInput,
+    StyleSheet,
+    Dimensions,
+    Image,
+    TouchableOpacity,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Controller, useForm } from 'react-hook-form';
+import { StackNavigationProp } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
 import * as Network from 'expo-network';
-import {getOrCreateDeviceId} from "@/util/deviceId";
-// import DeviceInfo from 'react-native-device-info';
+import Toast from 'react-native-toast-message';
 
+import {loadAuthState, useAuthStore} from '../../store/useAuthStore';
+import { useLoadingStore } from '../../store/useLoadingStore';
+import { getOrCreateDeviceId } from '../../util/deviceId';
+import AuthServices from '../../app/service/authService';
+import ButtonComponent from '../../components/ButtonComponent';
+import Colors from '../../constants/Colors';
+import {AuthStackParamList} from "@/app/screen/navigation/AuthNavigator";
 
-
-// Get screen dimensions
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 type FormData = {
     email: string;
@@ -27,157 +35,104 @@ type FormData = {
 };
 
 type NavigationProp = StackNavigationProp<AuthStackParamList, 'Login'>;
+
 export default function LoginScreen() {
-    const {setAuthenticated, setUser, setToken, user, isAuthenticated, accessToken} = useAuthStore();
     const navigation = useNavigation<NavigationProp>();
+    const { setAuthenticated, setUser, setToken } = useAuthStore();
+    const { setLoading } = useLoadingStore();
+
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+        setValue,
+    } = useForm<FormData>();
+
     const [passwordVisible, setPasswordVisible] = useState(false);
-    const {control, handleSubmit, formState: {errors}, setValue} = useForm<FormData>();
-    const {setLoading} = useLoadingStore();
     const [email, setEmail] = useState('');
-    const [deviceId, setDeviceId] = useState('');
-    const [ipAddress, setIpAddress] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
-
+    const [deviceId, setDeviceId] = useState('');
+    const [ipAddress, setIpAddress] = useState('');
 
     useEffect(() => {
-        const loadDeviceId = async () => {
+        const initialize = async () => {
             setLoading(true);
             try {
-                const address = await Network.getIpAddressAsync();
-                setIpAddress(address);
+                const ip = await Network.getIpAddressAsync();
                 const id = await getOrCreateDeviceId();
-                setDeviceId(id);
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        const initializeAuthState = async () => {
-            setLoading(true);
-            await loadAuthState(useAuthStore.setState);
-            setLoading(false);
-        };
-        const loadCredentials = async () => {
-            try {
                 const savedEmail = await AsyncStorage.getItem('rememberedEmail');
                 const savedPassword = await AsyncStorage.getItem('rememberedPassword');
-                const savedRememberMe = await AsyncStorage.getItem('rememberMe');
-                if (savedRememberMe === 'true') {
+                const savedRemember = await AsyncStorage.getItem('rememberMe');
+
+                setIpAddress(ip);
+                setDeviceId(id);
+
+                if (savedRemember === 'true') {
                     setEmail(savedEmail || '');
                     setValue('email', savedEmail || '');
                     setPassword(savedPassword || '');
+                    setValue('password', savedPassword || '');
                     setRememberMe(true);
                 }
-            } catch (error) {
-                console.error('Failed to load credentials:', error);
-            }
-        };
 
-        loadDeviceId()
-        initializeAuthState();
-        loadCredentials();
-
-    }, [setLoading]);
-
-    // console.log(`User:${user}`, `isAuthenticated:${isAuthenticated}`, `accessToken:${accessToken}`)
-
-
-    const handleLogin = async (data: any) => {
-        const {email, password} = data;
-        if (email && password) {
-            try {
-                setLoading(true);
-                const response = await AuthServices.login(email, password,ipAddress,deviceId);
-                if (response.statusCode === 200) {
-                    if (rememberMe) {
-                        // Save credentials
-                        await AsyncStorage.setItem('rememberedEmail', data.email);
-                        await AsyncStorage.setItem('rememberedPassword', data.password);
-                        await AsyncStorage.setItem('rememberMe', 'true');
-                    } else {
-                        // Clear credentials
-                        await AsyncStorage.removeItem('rememberedEmail');
-                        await AsyncStorage.removeItem('rememberedPassword');
-                        await AsyncStorage.setItem('rememberMe', 'false');
-                    }
-                    setToken(response.data.accessToken);
-                    setUser({
-                        id: response.data.user.id,
-                        email: response.data.user.email,
-                        fullName: response.data.user.fullname,
-                        photo: response.data.user.photo,
-                        roles: response.data.user.roles,
-                        username: response.data.user.username,
-                    });
-                    setAuthenticated(true)
-                    Toast.show({
-                        type: 'success',
-                        text1: 'Success',
-                        text2: `Login Successful`,
-                    });
-                }
-            } catch (error: any) {
-                const {data} = error.response;
-                if (data.statusCode === 404) {
-                    Toast.show({
-                        type: 'error',
-                        text1: 'Error',
-                        text2: `${data.message}`,
-                    });
-                } else {
-                    Toast.show({
-                        type: 'error',
-                        text1: 'Error',
-                        text2: `${data.message}`,
-                    });
-                }
+                await loadAuthState(useAuthStore.setState);
+            } catch (e) {
+                console.error(e);
             } finally {
                 setLoading(false);
             }
+        };
+        initialize();
+    }, []);
+
+    const handleLogin = async (data: FormData) => {
+        const { email, password } = data;
+        if (!email || !password) return;
+
+        try {
+            setLoading(true);
+            const res = await AuthServices.login(email, password, ipAddress, deviceId);
+
+            if (res.statusCode === 200) {
+                if (rememberMe) {
+                    await AsyncStorage.setItem('rememberedEmail', email);
+                    await AsyncStorage.setItem('rememberedPassword', password);
+                    await AsyncStorage.setItem('rememberMe', 'true');
+                } else {
+                    await AsyncStorage.multiRemove([
+                        'rememberedEmail',
+                        'rememberedPassword',
+                        'rememberMe',
+                    ]);
+                }
+
+                setToken(res.data.accessToken);
+                setUser(res.data.user);
+                setAuthenticated(true);
+
+                Toast.show({ type: 'success', text1: 'Login Successful' });
+            }
+        } catch (error: any) {
+            const message = error?.response?.data?.message || 'Login failed';
+            Toast.show({ type: 'error', text1: 'Error', text2: message });
+        } finally {
+            setLoading(false);
         }
     };
 
-    const {width, height} = Dimensions.get('window'); // Get device dimensions
-
-    const signInStyles = StyleSheet.create({
-        headerImage: {
-            width: width * 0.5, // Use percentage of device width
-            height: height * 0.4, // Use percentage of device height
-            resizeMode: 'contain',
-            marginBottom: 10,
-        },
-        forgotPassword: {
-            color: '#2F3193',
-            marginTop: height * 0.02, // Use percentage of device height
-            textAlign: 'center',
-            fontSize: width * 0.04, // Use percentage of device width
-        },
-        passwordContainer: {
-            marginBottom: 10,
-
-        },
-        eyeIcon: {
-            position: 'absolute',
-            right: 10,
-            top: 5,
-            zIndex: 1,
-        },
-    });
-
-
-    const handleForgotPassword = () => {
-        navigation.replace('ForgotPassword');  // Navigate to the ForgotPassword screen
-    };
-
     return (
-        <>
-            <View style={styles.container}>
-                <Image source={require('../../assets/images/sfa-removebg-preview.png')}
-                       style={signInStyles.headerImage}/>
-
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            style={{ flex: 1 }}>
+            <ScrollView
+                contentContainerStyle={styles.container}
+                keyboardShouldPersistTaps="handled">
+                <Image
+                    source={require('../../assets/images/icon-sfa.png')}
+                    style={styles.logo}
+                />
+                <Text style={styles.label}>Username / Email</Text>
                 <Controller
                     control={control}
                     name="email"
@@ -185,135 +140,172 @@ export default function LoginScreen() {
                     rules={{
                         required: 'Email is required',
                         pattern: {
-                            value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/, // Regex for email validation
+                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                             message: 'Invalid email address',
                         },
                     }}
-                    render={({field: {onChange, onBlur, value}}) => (
+                    render={({ field: { onChange, onBlur, value } }) => (
                         <TextInput
-                            placeholder="Email"
-                            value={value || email}
+                            style={[styles.input, errors.email && styles.errorInput]}
+                            placeholder="Username / Email"
                             onBlur={onBlur}
-                            onChangeText={(text) => {
-                                onChange(text); // Update react-hook-form value
-                                setEmail(text); // Update local state
+                            onChangeText={text => {
+                                onChange(text);
+                                setEmail(text);
                             }}
-                            style={[styles.input, errors.email && {borderColor: 'red'}]}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            value={value}
                         />
                     )}
                 />
-
-
-                {/* Password Input Field */}
-                <View style={signInStyles.passwordContainer}>
+                <Text style={styles.label}>Password</Text>
+                <View style={{width:'100%'}}>
                     <Controller
                         control={control}
                         name="password"
-                        rules={{required: 'Password is required'}}
-                        render={({field: {onChange, onBlur, value}}) => (
+                        rules={{ required: 'Password is required' }}
+                        render={({ field: { onChange, onBlur, value } }) => (
                             <TextInput
+                                style={[styles.input, errors.password && styles.errorInput]}
                                 placeholder="Password"
                                 secureTextEntry={!passwordVisible}
-                                value={value}
                                 onBlur={onBlur}
                                 onChangeText={onChange}
-                                style={[styles.input, errors.password && {borderColor: 'red'}]}
+                                autoCapitalize="none"
+                                value={value}
                             />
                         )}
                     />
-                    <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)} style={signInStyles.eyeIcon}>
-                        <Ionicons name={passwordVisible ? 'eye-off' : 'eye'} size={24}/>
+                    <TouchableOpacity
+                        style={styles.eyeIcon}
+                        onPress={() => setPasswordVisible(!passwordVisible)}>
+                        <Ionicons name={passwordVisible ? 'eye-off-outline' : 'eye-outline'} size={24} />
                     </TouchableOpacity>
                 </View>
 
-                <View style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    marginBottom: 20,
-                }}>
-                    <TouchableOpacity onPress={() => setRememberMe(!rememberMe)} style={{
-                        width: 20,
-                        height: 20,
-                        marginRight: 10,
-                    }}>
-                        <View style={rememberMe ? {
-                            width: 20,
-                            height: 20,
-                            alignItems: 'center',
-                            backgroundColor: '#2F3193',
-                            borderRadius: 5,
-                        } : {
-                            width: 20,
-                            height: 20,
-                            backgroundColor: '#fff',
-                            borderWidth: 1,
-                            borderColor: '#ccc',
-                            borderRadius: 5,
-                        }}
-                        >
-                            {rememberMe ? <Text style={{color: '#fff', fontWeight: 'bold', fontSize: 10}}>
-                                ✔
-                            </Text> : null}
+                <View style={styles.rememberContainer}>
+                    <TouchableOpacity onPress={() => setRememberMe(!rememberMe)}>
+                        <View style={[styles.checkbox, rememberMe && styles.checkedBox]}>
+                            {rememberMe && (
+                                <Ionicons name="checkmark" size={16} color="#fff" />
+                            )}
                         </View>
-
-
                     </TouchableOpacity>
-                    <Text style={{
-                        fontSize: 16,
-                        color: '#333',
-                    }}>Remember Me</Text>
+                    <Text style={styles.rememberText}>Remember Me</Text>
                 </View>
 
                 <ButtonComponent
-                    title="Login"
+                    title="Masuk"
                     onPress={handleSubmit(handleLogin)}
                     buttonStyle={styles.button}
                     textStyle={styles.buttonText}
                 />
 
-                <TouchableOpacity onPress={handleForgotPassword}>
-                    <Text style={signInStyles.forgotPassword}>Forgot Password?</Text>
+                <TouchableOpacity onPress={() => navigation.replace('ForgotPassword')}>
+                    <Text style={styles.forgot}>Lupa Password?</Text>
                 </TouchableOpacity>
-            </View>
-            <Toast/>
-        </>
+
+                <Toast />
+                <Image
+                    source={require('../../assets/images/background-login.png')}
+                    style={styles.backgroundImage}
+                />
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        alignItems: 'center',
+        flexGrow: 1,
         justifyContent: 'center',
-        padding: width > 400 ? width * 0.075 : width * 0.05,
+        alignItems: 'center',
+        paddingHorizontal: width * 0.08,
         backgroundColor: '#fff',
     },
-    text: {
-        fontSize: width > 400 ? width * 0.05 : width * 0.045,
-        color: "black",
+    logo: {
+        width: width * 0.25,
+        height: height * 0.25,
+        resizeMode: 'contain',
+    },
+    input: {
+        width: '100%',
+        height: 48,
+        backgroundColor:'#EFF0F6',
+        borderColor: Colors.primeColor,
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        marginBottom: 12,
+        color: '#000',
+    },
+    errorInput: {
+        borderColor: 'red',
+    },
+    label: {
+        width: '100%',
+        marginBottom: 4,
+        fontSize: 16,
+        fontWeight: '500',
+        color: '#333',
+    },
+    eyeIcon: {
+        position: 'absolute',
+        right: 12,
+        top: 12,
+    },
+    rememberContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+        alignSelf: 'flex-start',
+    },
+    checkbox: {
+        width: 30,
+        height: 30,
+        borderWidth: 1,
+        backgroundColor:'#EFF0F6',
+        borderColor: '#ccc',
+        borderRadius: 30,
+        marginRight: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    checkedBox: {
+        backgroundColor: '#2F3193',
+    },
+    checkMark: {
+        color: '#fff',
+        fontSize: 16,
+    },
+    rememberText: {
+        fontSize: 16,
+        color: '#333',
     },
     button: {
         backgroundColor: '#2F3193',
-        padding: height > 700 ? height * 0.02 : height * 0.015,
-        borderRadius: 8,
-        width: width * 0.8,
+        paddingVertical: 12,
+        borderRadius: 30,
+        width: '100%',
         alignItems: 'center',
-        justifyContent: 'center',
+        marginBottom: 20,
     },
     buttonText: {
-        color: "#fff",
-        fontSize: width > 400 ? width * 0.04 : width * 0.035,
+        color: '#fff',
         fontWeight: 'bold',
+        fontSize: 16,
     },
-    input: {
-        height: 40,
-        borderColor: "black",
-        borderWidth: 1.5,
-        paddingLeft: width * 0.025,
-        borderRadius: 8,
-        width: width - 20,
-        marginBottom: height * 0.02,
-        backgroundColor: "white",
-        color: "black",
+    forgot: {
+        color: Colors.secondaryColor,
+        fontSize: 16,
+        textAlign: 'center',
     },
-})
+    backgroundImage: {
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        height: height * 0.2, // Adjust as needed
+        resizeMode: 'cover',
+        zIndex: -1,
+    },
+});

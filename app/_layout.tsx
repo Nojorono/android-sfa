@@ -10,7 +10,7 @@ import Toast from "react-native-toast-message";
 import {getDatabaseInstance} from "@/config/db";
 import {useLoadingStore} from "@/store/useLoadingStore";
 import {BackgroundFetchStatus} from "expo-background-fetch";
-import {OfflineProvider} from "@/app/context/OfflineProvider";
+import {OfflineProvider} from "@/components/context/OfflineProvider";
 import {defaultDatabaseDirectory, SQLiteProvider} from "expo-sqlite";
 import {useFonts} from "expo-font";
 

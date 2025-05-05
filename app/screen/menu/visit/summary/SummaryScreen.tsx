@@ -33,6 +33,7 @@ export default function SummaryScreen() {
                 type: 'error',
                 text1: 'Navigation Error',
                 text2: `Screen "${nav}" does not exist.`,
+                autoHide:true
             });
         }
     }
